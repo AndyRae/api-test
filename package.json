@@ -4,8 +4,7 @@
   "description": "OpenAPI documentation for Books API",
   "main": "index.js",
   "scripts": {
-    "build": "node scripts/build.js",
-    "preview": "npm run build && npx http-server docs -p 8080 -o"
+    "build": "node scripts/build.js"
   },
   "keywords": [
     "openapi",
@@ -16,7 +15,6 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@redocly/cli": "^1.0.0",
-    "http-server": "^14.1.1"
+    "@redocly/cli": "^1.0.0"
   }
 }
