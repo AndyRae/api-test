@@ -1,0 +1,338 @@
+openapi: 3.0.3
+info:
+  title: Pets API
+  description: A simple API for managing a collection of pets
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@example.com
+servers:
+  - url: https://api.example.com/v1
+    description: Production server
+  - url: http://localhost:3000/v1
+    description: Development server
+paths:
+  /pets:
+    get:
+      summary: List all pets
+      description: Retrieve a list of all pets in the collection
+      operationId: listPets
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of pets to return
+          required: false
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 100
+        - name: offset
+          in: query
+          description: Number of pets to skip
+          required: false
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+        - name: type
+          in: query
+          description: Filter pets by type
+          required: false
+          schema:
+            type: string
+            enum: [dog, cat, bird, fish, reptile, other]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pets:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Pet'
+                  total:
+                    type: integer
+                    description: Total number of pets
+                  limit:
+                    type: integer
+                  offset:
+                    type: integer
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      summary: Create a new pet
+      description: Add a new pet to the collection
+      operationId: createPet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePetRequest'
+      responses:
+        '201':
+          description: Pet created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /pets/{petId}:
+    get:
+      summary: Get a pet by ID
+      description: Retrieve a specific pet by its ID
+      operationId: getPet
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          description: The ID of the pet to retrieve
+          schema:
+            type: string
+            pattern: '^[a-zA-Z0-9-]+$'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      summary: Update a pet
+      description: Update an existing pet by its ID
+      operationId: updatePet
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          description: The ID of the pet to update
+          schema:
+            type: string
+            pattern: '^[a-zA-Z0-9-]+$'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePetRequest'
+      responses:
+        '200':
+          description: Pet updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      summary: Delete a pet
+      description: Remove a pet from the collection
+      operationId: deletePet
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          description: The ID of the pet to delete
+          schema:
+            type: string
+            pattern: '^[a-zA-Z0-9-]+$'
+      responses:
+        '204':
+          description: Pet deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+components:
+  schemas:
+    Pet:
+      type: object
+      required:
+        - id
+        - name
+        - type
+        - owner
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the pet
+          example: "pet-123"
+        name:
+          type: string
+          description: The name of the pet
+          example: "Buddy"
+        type:
+          type: string
+          description: The type of pet
+          enum: [dog, cat, bird, fish, reptile, other]
+          example: "dog"
+        owner:
+          type: string
+          description: The name of the pet's owner
+          example: "John Doe"
+        breed:
+          type: string
+          description: The breed of the pet
+          example: "Golden Retriever"
+        age:
+          type: integer
+          description: Age of the pet in years
+          example: 3
+        weight:
+          type: number
+          description: Weight of the pet in kilograms
+          example: 25.5
+        color:
+          type: string
+          description: Color of the pet
+          example: "Golden"
+        description:
+          type: string
+          description: A brief description of the pet
+          example: "A friendly and energetic dog who loves to play fetch."
+        createdAt:
+          type: string
+          format: date-time
+          description: When the pet was added to the collection
+          example: "2023-01-15T10:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: When the pet was last updated
+          example: "2023-01-15T10:30:00Z"
+    CreatePetRequest:
+      type: object
+      required:
+        - name
+        - type
+        - owner
+      properties:
+        name:
+          type: string
+          description: The name of the pet
+          example: "Buddy"
+        type:
+          type: string
+          description: The type of pet
+          enum: [dog, cat, bird, fish, reptile, other]
+          example: "dog"
+        owner:
+          type: string
+          description: The name of the pet's owner
+          example: "John Doe"
+        breed:
+          type: string
+          description: The breed of the pet
+          example: "Golden Retriever"
+        age:
+          type: integer
+          description: Age of the pet in years
+          example: 3
+        weight:
+          type: number
+          description: Weight of the pet in kilograms
+          example: 25.5
+        color:
+          type: string
+          description: Color of the pet
+          example: "Golden"
+        description:
+          type: string
+          description: A brief description of the pet
+          example: "A friendly and energetic dog who loves to play fetch."
+    UpdatePetRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the pet
+          example: "Buddy"
+        type:
+          type: string
+          description: The type of pet
+          enum: [dog, cat, bird, fish, reptile, other]
+          example: "dog"
+        owner:
+          type: string
+          description: The name of the pet's owner
+          example: "John Doe"
+        breed:
+          type: string
+          description: The breed of the pet
+          example: "Golden Retriever"
+        age:
+          type: integer
+          description: Age of the pet in years
+          example: 3
+        weight:
+          type: number
+          description: Weight of the pet in kilograms
+          example: 25.5
+        color:
+          type: string
+          description: Color of the pet
+          example: "Golden"
+        description:
+          type: string
+          description: A brief description of the pet
+          example: "A friendly and energetic dog who loves to play fetch."
+  responses:
+    BadRequest:
+      description: Bad request - invalid input
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Invalid input"
+              message:
+                type: string
+                example: "The request contains invalid data"
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Not Found"
+              message:
+                type: string
+                example: "The requested resource was not found"
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Internal Server Error"
+              message:
+                type: string
+                example: "An unexpected error occurred"
+tags:
+  - name: pets
+    description: Operations related to pets

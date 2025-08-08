@@ -1,0 +1,316 @@
+openapi: 3.0.3
+info:
+  title: Books API
+  description: A simple API for managing a collection of books
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@example.com
+servers:
+  - url: https://api.example.com/v1
+    description: Production server
+  - url: http://localhost:3000/v1
+    description: Development server
+paths:
+  /books:
+    get:
+      summary: List all books
+      description: Retrieve a list of all books in the collection
+      operationId: listBooks
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of books to return
+          required: false
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 100
+        - name: offset
+          in: query
+          description: Number of books to skip
+          required: false
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  books:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Book'
+                  total:
+                    type: integer
+                    description: Total number of books
+                  limit:
+                    type: integer
+                  offset:
+                    type: integer
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      summary: Create a new book
+      description: Add a new book to the collection
+      operationId: createBook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBookRequest'
+      responses:
+        '201':
+          description: Book created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /books/{bookId}:
+    get:
+      summary: Get a book by ID
+      description: Retrieve a specific book by its ID
+      operationId: getBook
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          description: The ID of the book to retrieve
+          schema:
+            type: string
+            pattern: '^[a-zA-Z0-9-]+$'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      summary: Update a book
+      description: Update an existing book by its ID
+      operationId: updateBook
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          description: The ID of the book to update
+          schema:
+            type: string
+            pattern: '^[a-zA-Z0-9-]+$'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBookRequest'
+      responses:
+        '200':
+          description: Book updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      summary: Delete a book
+      description: Remove a book from the collection
+      operationId: deleteBook
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          description: The ID of the book to delete
+          schema:
+            type: string
+            pattern: '^[a-zA-Z0-9-]+$'
+      responses:
+        '204':
+          description: Book deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+components:
+  schemas:
+    Book:
+      type: object
+      required:
+        - id
+        - title
+        - author
+        - isbn
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the book
+          example: "book-123"
+        title:
+          type: string
+          description: The title of the book
+          example: "The Great Gatsby"
+        author:
+          type: string
+          description: The author of the book
+          example: "F. Scott Fitzgerald"
+        isbn:
+          type: string
+          description: International Standard Book Number
+          example: "978-0743273565"
+        description:
+          type: string
+          description: A brief description of the book
+          example: "A story of the fabulously wealthy Jay Gatsby and his love for the beautiful Daisy Buchanan."
+        publishedYear:
+          type: integer
+          description: The year the book was published
+          example: 1925
+        genre:
+          type: string
+          description: The genre of the book
+          example: "Fiction"
+        pages:
+          type: integer
+          description: Number of pages in the book
+          example: 180
+        createdAt:
+          type: string
+          format: date-time
+          description: When the book was added to the collection
+          example: "2023-01-15T10:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: When the book was last updated
+          example: "2023-01-15T10:30:00Z"
+    CreateBookRequest:
+      type: object
+      required:
+        - title
+        - author
+        - isbn
+      properties:
+        title:
+          type: string
+          description: The title of the book
+          example: "The Great Gatsby"
+        author:
+          type: string
+          description: The author of the book
+          example: "F. Scott Fitzgerald"
+        isbn:
+          type: string
+          description: International Standard Book Number
+          example: "978-0743273565"
+        description:
+          type: string
+          description: A brief description of the book
+          example: "A story of the fabulously wealthy Jay Gatsby and his love for the beautiful Daisy Buchanan."
+        publishedYear:
+          type: integer
+          description: The year the book was published
+          example: 1925
+        genre:
+          type: string
+          description: The genre of the book
+          example: "Fiction"
+        pages:
+          type: integer
+          description: Number of pages in the book
+          example: 180
+    UpdateBookRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: The title of the book
+          example: "The Great Gatsby"
+        author:
+          type: string
+          description: The author of the book
+          example: "F. Scott Fitzgerald"
+        isbn:
+          type: string
+          description: International Standard Book Number
+          example: "978-0743273565"
+        description:
+          type: string
+          description: A brief description of the book
+          example: "A story of the fabulously wealthy Jay Gatsby and his love for the beautiful Daisy Buchanan."
+        publishedYear:
+          type: integer
+          description: The year the book was published
+          example: 1925
+        genre:
+          type: string
+          description: The genre of the book
+          example: "Fiction"
+        pages:
+          type: integer
+          description: Number of pages in the book
+          example: 180
+  responses:
+    BadRequest:
+      description: Bad request - invalid input
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Invalid input"
+              message:
+                type: string
+                example: "The request contains invalid data"
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Not Found"
+              message:
+                type: string
+                example: "The requested resource was not found"
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Internal Server Error"
+              message:
+                type: string
+                example: "An unexpected error occurred"
+tags:
+  - name: books
+    description: Operations related to books

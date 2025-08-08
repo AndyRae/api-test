@@ -1,0 +1,136 @@
+# API Documentation Hub
+
+This repository contains OpenAPI documentation for multiple APIs, automatically published to GitHub Pages with a custom landing page.
+
+## Local Development
+
+### Prerequisites
+
+- Node.js (version 16 or higher)
+- npm
+
+### Setup
+
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+2. Build the documentation:
+   ```bash
+   npm run build
+   ```
+   
+   This generates static HTML files for all APIs in the `docs/` directory.
+
+
+
+### Preview Production Build
+
+To preview the production build locally:
+
+```bash
+npm run preview
+```
+
+This builds the docs and serves them at http://localhost:8080 to test the final GitHub Pages deployment.
+
+## Available APIs
+
+This repository contains documentation for multiple APIs:
+
+### Books API (`/books`)
+- Complete CRUD operations for managing books
+- Includes metadata like author, ISBN, genre, and publication year
+- Comprehensive request/response schemas
+
+### Pets API (`/pets`)
+- Complete CRUD operations for managing pets
+- Includes pet registration, owner information, and breed details
+- Health tracking capabilities
+
+## Documentation Features
+
+The API documentation is generated from OpenAPI 3.0 specifications using Redoc and includes:
+
+- Interactive API documentation with try-it-out functionality
+- Request/response examples and schemas
+- Comprehensive error handling documentation
+- Mobile-responsive design
+- Custom landing page with API overview
+
+## GitHub Pages Deployment
+
+The documentation is automatically deployed to GitHub Pages via GitHub Actions. The workflow:
+
+1. Triggers on pushes to the `main` branch
+2. Builds the documentation using Redoc
+3. Deploys to GitHub Pages
+
+### Manual Deployment
+
+If you need to deploy manually:
+
+1. Build the documentation:
+   ```bash
+   npm run build
+   ```
+
+2. Commit and push the `docs/` directory to the `gh-pages` branch.
+
+## File Structure
+
+```
+├── apis/                 # API specifications
+│   ├── books/
+│   │   └── openapi.yaml # Books API specification
+│   └── pets/
+│       └── openapi.yaml # Pets API specification
+├── src/                  # Source files
+│   └── index.html       # Custom landing page
+├── scripts/              # Build scripts
+│   └── build.js         # Multi-API build script
+├── docs/                 # Generated documentation (created by build)
+│   ├── index.html       # Landing page
+│   ├── books/           # Books API docs
+│   └── pets/            # Pets API docs
+├── package.json          # Node.js dependencies and scripts
+├── .github/workflows/    # GitHub Actions workflows
+└── README.md            # This file
+```
+
+## Customization
+
+### Modifying API Specs
+
+Edit the OpenAPI specifications in the `apis/` directory to modify the API documentation. The documentation will automatically update when you rebuild.
+
+### Adding New APIs
+
+To add a new API:
+
+1. Create a new directory in `apis/` (e.g., `apis/users/`)
+2. Add an `openapi.yaml` file in that directory
+3. Run `npm run build` to generate the documentation
+4. The new API will automatically appear on the landing page
+
+### Customizing the Documentation Theme
+
+You can customize the Redoc theme by modifying the build script in `scripts/build.js`.
+
+### Customizing the Landing Page
+
+Edit `src/index.html` to modify the landing page design and content.
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test locally with `npm run dev`
+5. Commit and push your changes
+6. Create a pull request
+
+## License
+
+MIT
